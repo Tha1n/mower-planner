@@ -1,0 +1,41 @@
+{
+    "[typescript]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        },
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascript]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        },
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "vsicons.presets.nestjs": true,
+    "vsicons.presets.angular": false,
+    "todo-tree.highlights.customHighlight": {
+        "TODO": {
+            "icon": "clock",
+            "iconColour": "#FFA500",
+            "foreground": "white",
+            "background": "#FFA500",
+            "opacity": 50,
+            "type": "line"
+        },
+        "FIXME": {
+            "icon": "tools",
+            "iconColour": "red",
+            "foreground": "white",
+            "background": "red",
+            "opacity": 50,
+            "type": "line"
+        }
+    },
+    "debug.node.autoAttach": "off"
+}
