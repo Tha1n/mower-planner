@@ -2,7 +2,7 @@ export interface Weather {
   cod: string;
   message: number;
   cnt: number;
-  forecasts: ShortForecast[];
+  list: ShortForecast[];
   city: City;
 }
 
