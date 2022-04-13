@@ -17,7 +17,7 @@ import { WeatherService } from './services/weather.service';
     }),
     ScheduleModule.forRoot(),
     HttpModule,
-    JwtModule.register({}), // No config since we do not encode token here
+    JwtModule.register({}), // No config since we do not encode token on this app
   ],
   controllers: [MetadataController],
   providers: [
