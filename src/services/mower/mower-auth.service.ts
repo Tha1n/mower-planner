@@ -66,7 +66,7 @@ export class MowerAuthService {
     params.set('password', this._configService.get('HUSQ_PWD'));
 
     const authData: MowerAuthResponse = await firstValueFrom(
-      this.authApiCall$(params).pipe(
+      this.authenticateApi$(params).pipe(
         catchError((err: any) => {
           this._logger.error(`The following error occured when getting access_token: ${err}`);
           return EMPTY;
@@ -84,7 +84,7 @@ export class MowerAuthService {
     params.set('refresh_token', this._refreshToken);
 
     const authData: MowerAuthResponse = await firstValueFrom(
-      this.authApiCall$(params).pipe(
+      this.authenticateApi$(params).pipe(
         catchError((err: any) => {
           this._logger.error(`The following error occured when trying to refresh token: ${err}`);
           return EMPTY;
@@ -95,7 +95,7 @@ export class MowerAuthService {
     this._refreshToken = authData.refresh_token;
   }
 
-  private authApiCall$(params: URLSearchParams): Observable<MowerAuthResponse> {
+  private authenticateApi$(params: URLSearchParams): Observable<MowerAuthResponse> {
     return this._http
       .post<MowerAuthResponse>(`${this._configService.get('HUSQ_AUTH_API_ENDPOINT')}/oauth2/token`, params, {
         httpsAgent: new Agent({ rejectUnauthorized: false }),

@@ -11,30 +11,26 @@ export class MowerEndpointCron {
     this._logger.debug('Ctor');
   }
 
-  @Cron('0,15,30,45 * * * * *')
-  handleRefresh() {
-    this._logger.debug('Called every 15 second. Only here for debug purpose.');
-  }
-
-  // The future cron will be: 0 0,12 * * *
-  @Cron('* * * * *', {
+  @Cron('0 0,12 * * *', {
     name: 'mowerCron',
     timeZone: 'Europe/Paris',
   })
   async handleMowerSchedule() {
     // Start script
+    this._logger.log('Mower Cron START.');
     // Call Weather service to retrieve data
     const isWeatherRainy = await this._weatherService.isWeatherRainy();
 
     // We need to stop the mower schedule
     if (isWeatherRainy) {
-      this._logger.log('Weather is too rainy, we need to stop mower.');
+      this._logger.log('Weather is too rainy, need to stop mower.');
       await this._mowerService.stopMower();
     } else {
       // We need to restore or let the actual mower schedule
-      this._logger.log('Weather is not rainy, we need to restore or let the actual schedule.');
-      await this._mowerService.restartMower();
+      this._logger.log('Weather is not rainy, need to restore or let the actual schedule.');
+      await this._mowerService.resumeScheduleMower();
     }
+    this._logger.log('Mower Cron DONE.');
     // End of script
   }
 }
