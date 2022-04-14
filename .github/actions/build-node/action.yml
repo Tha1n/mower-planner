@@ -1,0 +1,12 @@
+name: "node-build"
+description: "Build and test a node app"
+
+runs: 
+  using: composite
+  steps:
+    - run: npm ci
+      shell: bash
+    - run: npm run build --if-present
+      shell: bash
+    - run: npm test
+      shell: bash
