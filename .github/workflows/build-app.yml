@@ -9,14 +9,23 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  IMAGE_NAME: mower-planner
+  REGISTRY_LOCALE: europe-west1-docker.pkg.dev
+  REGISTRY_IMAGE: europe-west1-docker.pkg.dev/mower-planner/docker-repository
+
 jobs:
   build-app:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [16.x]
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
     - name: Get app version from package.json
       id: package-version
       uses: martinbeentjes/npm-get-version-action@master
@@ -27,5 +36,21 @@ jobs:
         cache: "npm"
     - name: Build and test app
       uses: ./.github/actions/build-node
-    - name: Build the Docker image
-      run: docker build . --tag mower-planner:${{ steps.package-version.outputs.current-version}}-${GITHUB_SHA::7}
+    - name: 'Authenticate to Google Cloud'
+      id: 'auth'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        workload_identity_provider: ${{ secrets.GCLOUD_WORKLOAD_IDENTITY_PROVIDER }}
+        service_account: ${{ secrets.GCLOUD_SVC_ACCOUNT }}
+    - name: Build the Docker image and push to Artefact Registry
+      env:
+        APP_VERSION: ${{ steps.package-version.outputs.current-version }}
+      run: |
+        gcloud auth configure-docker ${{ env.REGISTRY_LOCALE }}
+        docker build . --tag ${{ env.IMAGE_NAME }}:${{ env.APP_VERSION }}
+        docker tag ${{ env.IMAGE_NAME }}:${{ env.APP_VERSION }} ${{ env.REGISTRY_IMAGE }}/${{ env.IMAGE_NAME }}:${{ env.APP_VERSION }}-${GITHUB_SHA::7}
+        docker tag ${{ env.IMAGE_NAME }}:${{ env.APP_VERSION }} ${{ env.REGISTRY_IMAGE }}/${{ env.IMAGE_NAME }}:beta
+        docker push ${{ env.REGISTRY_IMAGE }}/${{ env.IMAGE_NAME }}:${{ env.APP_VERSION }}-${GITHUB_SHA::7}
+        docker push ${{ env.REGISTRY_IMAGE }}/${{ env.IMAGE_NAME }}:beta
+    
+
