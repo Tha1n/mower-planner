@@ -1,17 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { MowerService } from 'src/services/mower/mower.service';
-import { WeatherService } from 'src/services/weather.service';
+import { MowerService } from 'src/mower/services/mower.service';
+import { WeatherService } from 'src/weather/services/weather.service';
 
 @Injectable()
 export class MowerEndpointCron {
   private readonly _logger = new Logger(MowerEndpointCron.name);
 
-  constructor(private readonly _weatherService: WeatherService, private readonly _mowerService: MowerService) {
-    this._logger.debug('Ctor');
-  }
+  constructor(private readonly _weatherService: WeatherService, private readonly _mowerService: MowerService) {}
 
-  @Cron('0 0,12 * * *', {
+  // @Cron('0 0,12 * * *', {
+  @Cron('* * * * *', {
     name: 'mowerCron',
     timeZone: 'Europe/Paris',
   })

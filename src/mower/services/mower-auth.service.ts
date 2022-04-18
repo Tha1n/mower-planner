@@ -5,7 +5,8 @@ import { JwtService } from '@nestjs/jwt';
 import { AxiosResponse } from 'axios';
 import { Agent } from 'https';
 import { catchError, EMPTY, firstValueFrom, map, Observable } from 'rxjs';
-import { MowerAuthResponse } from 'src/models/mower/auth-response';
+import { CFG_MWR_AUTH_API_URL, CFG_MWR_KEY, CFG_MWR_PWD, CFG_MWR_USR } from 'src/assets/config.constants';
+import { MowerAuthResponse } from 'src/mower/models/auth-response';
 import { URLSearchParams } from 'url';
 
 // Specify service is Singleton (default behavior)
@@ -20,8 +21,6 @@ export class MowerAuthService {
     private readonly _http: HttpService,
     private readonly _jwtService: JwtService,
   ) {
-    this._logger.debug('Ctor');
-
     this._token = '';
     this._refreshToken = '';
   }
@@ -61,9 +60,9 @@ export class MowerAuthService {
   private async getToken(): Promise<void> {
     const params = new URLSearchParams();
     params.set('grant_type', 'password');
-    params.set('client_id', this._configService.get('HUSQ_APP_KEY'));
-    params.set('username', this._configService.get('HUSQ_USER'));
-    params.set('password', this._configService.get('HUSQ_PWD'));
+    params.set('client_id', this._configService.get(CFG_MWR_KEY));
+    params.set('username', this._configService.get(CFG_MWR_USR));
+    params.set('password', this._configService.get(CFG_MWR_PWD));
 
     const authData: MowerAuthResponse = await firstValueFrom(
       this.authenticateApi$(params).pipe(
@@ -80,7 +79,7 @@ export class MowerAuthService {
   private async refreshToken(): Promise<void> {
     const params = new URLSearchParams();
     params.set('grant_type', 'refresh_token');
-    params.set('client_id', this._configService.get('HUSQ_APP_KEY'));
+    params.set('client_id', this._configService.get(CFG_MWR_KEY));
     params.set('refresh_token', this._refreshToken);
 
     const authData: MowerAuthResponse = await firstValueFrom(
@@ -97,7 +96,7 @@ export class MowerAuthService {
 
   private authenticateApi$(params: URLSearchParams): Observable<MowerAuthResponse> {
     return this._http
-      .post<MowerAuthResponse>(`${this._configService.get('HUSQ_AUTH_API_ENDPOINT')}/oauth2/token`, params, {
+      .post<MowerAuthResponse>(`${this._configService.get(CFG_MWR_AUTH_API_URL)}/oauth2/token`, params, {
         httpsAgent: new Agent({ rejectUnauthorized: false }),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

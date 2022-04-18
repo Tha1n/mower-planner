@@ -1,6 +1,6 @@
 {
   "name": "mower-planner",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "author": "",
   "private": true,
@@ -28,6 +28,7 @@
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/platform-express": "8.0.0",
     "@nestjs/schedule": "1.0.1",
+    "@nestjs/terminus": "^8.0.6",
     "axios": "^0.26.1",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",

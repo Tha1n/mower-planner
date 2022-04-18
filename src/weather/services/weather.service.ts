@@ -4,19 +4,27 @@ import { ConfigService } from '@nestjs/config';
 import { AxiosResponse } from 'axios';
 import { Agent } from 'https';
 import { catchError, EMPTY, firstValueFrom, map, Observable } from 'rxjs';
-import { Weather } from 'src/models/weather';
+import {
+  CFG_WTHR_API_TOKEN,
+  CFG_WTHR_API_URL,
+  CFG_WTHR_FORECAST_NB,
+  CFG_WTHR_HUM_LVL,
+  CFG_WTHR_LAT,
+  CFG_WTHR_LNG,
+  CFG_WTHR_RAIN_LVL,
+  CFG_WTHR_UNIT,
+} from 'src/assets/config.constants';
+import { Weather } from 'src/weather/models/weather';
 
 @Injectable()
 export class WeatherService {
   private readonly _logger = new Logger(WeatherService.name);
 
-  constructor(private readonly _configService: ConfigService, private readonly _http: HttpService) {
-    this._logger.debug('Ctor');
-  }
+  constructor(private readonly _configService: ConfigService, private readonly _http: HttpService) {}
 
   public async isWeatherRainy(): Promise<boolean> {
-    const humidityLevelReference: number = Number(this._configService.get('MAX_HUMIDITY_LEVEL'));
-    const maxRainReference: number = Number(this._configService.get('MAX_RAIN_LEVEL'));
+    const humidityLevelReference: number = Number(this._configService.get(CFG_WTHR_HUM_LVL));
+    const maxRainReference: number = Number(this._configService.get(CFG_WTHR_RAIN_LVL));
 
     let weatherData: Weather = await this.getWeatherData();
     let maxHumidity = 0;
@@ -35,13 +43,13 @@ export class WeatherService {
 
   private getWeatherData(): Promise<Weather> {
     let $weather: Observable<AxiosResponse<Weather>> = this._http
-      .get<Weather>(this._configService.get('WEATHER_API_ENDPOINT'), {
+      .get<Weather>(this._configService.get(CFG_WTHR_API_URL), {
         params: {
-          lat: this._configService.get('WEATHER_API_LAT'),
-          lon: this._configService.get('WEATHER_API_LNG'),
-          appid: this._configService.get('WEATHER_API_TOKEN'),
-          units: this._configService.get('WEATHER_API_UNIT'),
-          cnt: this._configService.get('WEATHER_API_FORECAST_NB'),
+          lat: this._configService.get(CFG_WTHR_LAT),
+          lon: this._configService.get(CFG_WTHR_LNG),
+          appid: this._configService.get(CFG_WTHR_API_TOKEN),
+          units: this._configService.get(CFG_WTHR_UNIT),
+          cnt: this._configService.get(CFG_WTHR_FORECAST_NB),
         },
         httpsAgent: new Agent({ rejectUnauthorized: false }),
       })
