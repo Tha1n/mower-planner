@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Metadata } from 'src/models/metadata';
+import { Metadata } from '../models/metadata';
 
 @Controller('metadata')
 export class MetadataController {
@@ -29,9 +29,7 @@ export class MetadataController {
     const hours = Math.floor(((uptime % 31536000) % 86400) / 3600);
     const minutes = Math.floor((((uptime % 31536000) % 86400) % 3600) / 60);
     const seconds = (((uptime % 31536000) % 86400) % 3600) % 60;
-    return `${years} Years, ${days} Days, ${this.pad(hours)}h${this.pad(
-      minutes,
-    )}:${this.pad(seconds)}`;
+    return `${years} Years, ${days} Days, ${this.pad(hours)}h${this.pad(minutes)}:${this.pad(seconds)}`;
   }
 
   /**

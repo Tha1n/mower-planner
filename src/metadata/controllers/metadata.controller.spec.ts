@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Metadata } from 'src/models/metadata';
+import { Metadata } from '../models/metadata';
 import { MetadataController } from './metadata.controller';
 
 describe('AppController', () => {
