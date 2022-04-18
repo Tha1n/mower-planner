@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { MowerService } from 'src/mower/services/mower.service';
-import { WeatherService } from 'src/weather/services/weather.service';
+import { MowerService } from '../../mower/services/mower.service';
+import { WeatherService } from '../../weather/services/weather.service';
 
 @Injectable()
 export class MowerEndpointCron {
@@ -9,8 +9,7 @@ export class MowerEndpointCron {
 
   constructor(private readonly _weatherService: WeatherService, private readonly _mowerService: MowerService) {}
 
-  // @Cron('0 0,12 * * *', {
-  @Cron('* * * * *', {
+  @Cron('0 0,12 * * *', {
     name: 'mowerCron',
     timeZone: 'Europe/Paris',
   })

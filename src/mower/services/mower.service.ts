@@ -3,7 +3,7 @@ import { Injectable, Logger, Scope } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Agent } from 'https';
 import { catchError, EMPTY, firstValueFrom, Observable } from 'rxjs';
-import { CFG_MWR_API_URL, CFG_MWR_ID, CFG_MWR_KEY } from 'src/assets/config.constants';
+import { CFG_MWR_API_URL, CFG_MWR_ID, CFG_MWR_KEY } from '../../assets/config.constants';
 import { MowerActionsPayload, PAYLOAD_PARK, PAYLOAD_RESUME } from '../models/mower-actions-payload';
 import { MowerAuthService } from './mower-auth.service';
 

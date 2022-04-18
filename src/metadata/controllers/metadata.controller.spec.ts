@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Metadata } from '../models/metadata';
 import { MetadataController } from './metadata.controller';
 
-describe('AppController', () => {
+describe('MetadataController', () => {
   let metadataController: MetadataController;
   const mockedData = {
     APP_NAME: 'DummyTestAppName',
@@ -30,7 +30,7 @@ describe('AppController', () => {
     metadataController = app.get<MetadataController>(MetadataController);
   });
 
-  describe('metadataController', () => {
+  describe('MetadataController', () => {
     it('should return app metadata', () => {
       const result: Metadata = metadataController.getInfo();
       expect(result.appName).toBe(mockedData.APP_NAME);
