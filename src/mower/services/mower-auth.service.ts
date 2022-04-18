@@ -5,9 +5,9 @@ import { JwtService } from '@nestjs/jwt';
 import { AxiosResponse } from 'axios';
 import { Agent } from 'https';
 import { catchError, EMPTY, firstValueFrom, map, Observable } from 'rxjs';
-import { CFG_MWR_AUTH_API_URL, CFG_MWR_KEY, CFG_MWR_PWD, CFG_MWR_USR } from 'src/assets/config.constants';
-import { MowerAuthResponse } from 'src/mower/models/auth-response';
 import { URLSearchParams } from 'url';
+import { CFG_MWR_AUTH_API_URL, CFG_MWR_KEY, CFG_MWR_PWD, CFG_MWR_USR } from '../../assets/config.constants';
+import { MowerAuthResponse } from '../models/auth-response';
 
 // Specify service is Singleton (default behavior)
 @Injectable({ scope: Scope.DEFAULT })

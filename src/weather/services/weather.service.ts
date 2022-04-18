@@ -13,8 +13,8 @@ import {
   CFG_WTHR_LNG,
   CFG_WTHR_RAIN_LVL,
   CFG_WTHR_UNIT,
-} from 'src/assets/config.constants';
-import { Weather } from 'src/weather/models/weather';
+} from '../../assets/config.constants';
+import { Weather } from '../models/weather';
 
 @Injectable()
 export class WeatherService {

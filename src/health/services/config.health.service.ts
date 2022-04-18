@@ -10,7 +10,7 @@ import {
   CFG_WTHR_API_TOKEN,
   CFG_WTHR_LAT,
   CFG_WTHR_LNG,
-} from 'src/assets/config.constants';
+} from '../../assets/config.constants';
 
 @Injectable()
 export class ConfigHealthIndicator extends HealthIndicator {

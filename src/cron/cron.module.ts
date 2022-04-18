@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
-import { MowerModule } from 'src/mower/mower.module';
-import { WeatherModule } from 'src/weather/weather.module';
+import { MowerModule } from '../mower/mower.module';
+import { WeatherModule } from '../weather/weather.module';
 import { MowerEndpointCron } from './services/mower-endpoint.cron';
 
 @Module({

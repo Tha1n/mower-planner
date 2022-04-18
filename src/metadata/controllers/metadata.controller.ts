@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { CFG_APP_DESCRIPTION, CFG_APP_NAME, CFG_APP_VERSION } from '../../assets/config.constants';
 import { Metadata } from '../models/metadata';
 
 @Controller('metadata')
@@ -9,9 +10,9 @@ export class MetadataController {
   @Get()
   getInfo(): Metadata {
     return {
-      appName: this._configService.get<string>('APP_NAME'),
-      description: this._configService.get<string>('APP_DESCRIPTION'),
-      version: this._configService.get<string>('APP_VERSION'),
+      appName: this._configService.get<string>(CFG_APP_NAME),
+      description: this._configService.get<string>(CFG_APP_DESCRIPTION),
+      version: this._configService.get<string>(CFG_APP_VERSION),
       uptime: this.uptimeToDuration(process.uptime()),
     };
   }
