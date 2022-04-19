@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}
+data:
+  NODE_ENV: {{ .Values.environment }}
+  config.local.env: |
+    WEATHER_API_TOKEN={{ .Values.weatherapi.token | quote }}
+    WEATHER_API_LAT={{ .Values.weatherapi.latitude | quote }}
+    WEATHER_API_LNG={{ .Values.weatherapi.longitude | quote }}
+    HUSQ_APP_KEY={{ .Values.husqvarna.app.key | quote }}
+    HUSQ_APP_SECRET={{ .Values.husqvarna.app.secret | quote }}
+    HUSQ_USER={{ .Values.husqvarna.user | quote }}
+    HUSQ_PWD={{ .Values.husqvarna.password | quote }}
+    HUSQ_MOWER_ID={{ .Values.husqvarna.mowerid | quote }}
