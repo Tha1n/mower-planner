@@ -1,0 +1,9 @@
+apiVersion: v1
+version: 0.0.1
+name: mower-planner
+appVersion: 0.0.2
+description: Mower-Planner helm chart
+
+maintainers:
+  - name: Alexandre Quettier
+    url: https://github.com/Tha1n/mower-planner

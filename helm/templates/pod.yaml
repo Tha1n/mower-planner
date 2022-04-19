@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+spec:
+  serviceAccountName: mower-planner
+  containers:
+    - name: mower-planner
+      image: todo
+      volumeMounts:
+      - name: config-volume
+        mountPath: /config/config.local.env
+        subPath: config.local.env
+  volumes:
+    - name: config-volume
+      configMap:
+        name: mower-planner-config
+  restartPolicy: Never

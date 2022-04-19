@@ -36,3 +36,6 @@ lerna-debug.log*
 
 # Config & token
 /config/config.local.env
+
+# Helm package
+*.tgz

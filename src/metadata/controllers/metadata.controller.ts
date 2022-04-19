@@ -1,14 +1,17 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CFG_APP_DESCRIPTION, CFG_APP_NAME, CFG_APP_VERSION } from '../../assets/config.constants';
 import { Metadata } from '../models/metadata';
 
 @Controller('metadata')
 export class MetadataController {
+  private readonly _logger = new Logger(MetadataController.name);
+
   constructor(private readonly _configService: ConfigService) {}
 
   @Get()
   getInfo(): Metadata {
+    this._logger.log('Checking app health.');
     return {
       appName: this._configService.get<string>(CFG_APP_NAME),
       description: this._configService.get<string>(CFG_APP_DESCRIPTION),

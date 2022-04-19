@@ -1,0 +1,25 @@
+# Application values
+appPort: 3000
+environment: production
+
+weatherapi:
+  token:
+  latitude:
+  longitude:
+husqvarna:
+  app:
+    key:
+    secret:
+  user:
+  password:
+  mowerid:
+
+# Deployment values
+replicaCount: 1
+
+image:
+  repository: gcr.io/mower-planner/mower-planner
+
+service:
+  type: NodePort
+  port: 80
