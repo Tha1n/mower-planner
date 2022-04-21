@@ -16,12 +16,14 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          image: europe-west1-docker.pkg.dev/mower-planner/docker-repository/mower-planner:0.0.2-72e9b5d
-          # image: "{{ .Values.image.repository }}:latest"
+          image: europe-west1-docker.pkg.dev/mower-planner/registry/mower-planner:latest
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
                 name: {{ .Chart.Name }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
           ports:
             - name: http
               containerPort: {{ .Values.appPort }}
@@ -34,3 +36,10 @@ spec:
             httpGet:
               path: /health/ready
               port: http
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ .Chart.Name }}
+            items:
+            - key: config.local.env
+              path: config.local.env

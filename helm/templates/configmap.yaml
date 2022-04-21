@@ -6,10 +6,10 @@ data:
   NODE_ENV: {{ .Values.environment }}
   config.local.env: |
     WEATHER_API_TOKEN={{ .Values.weatherapi.token | quote }}
-    WEATHER_API_LAT={{ .Values.weatherapi.latitude | quote }}
-    WEATHER_API_LNG={{ .Values.weatherapi.longitude | quote }}
-    HUSQ_APP_KEY={{ .Values.husqvarna.app.key | quote }}
-    HUSQ_APP_SECRET={{ .Values.husqvarna.app.secret | quote }}
-    HUSQ_USER={{ .Values.husqvarna.user | quote }}
-    HUSQ_PWD={{ .Values.husqvarna.password | quote }}
-    HUSQ_MOWER_ID={{ .Values.husqvarna.mowerid | quote }}
+    WEATHER_API_LAT={{ .Values.weatherapi.lat | quote }}
+    WEATHER_API_LNG={{ .Values.weatherapi.lng | quote }}
+    HUSQ_APP_KEY={{ .Values.mower.app.key | quote }}
+    HUSQ_APP_SECRET={{ .Values.mower.app.secret | quote }}
+    HUSQ_USER={{ .Values.mower.user | quote }}
+    HUSQ_PWD={{ .Values.mower.password | quote }}
+    HUSQ_MOWER_ID={{ .Values.mower.mowerid | quote }}
