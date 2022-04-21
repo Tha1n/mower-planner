@@ -10,6 +10,10 @@ env:
   APP_NAME: mower-planner
   REGISTRY_LOCALE: europe-west1-docker.pkg.dev
   REGISTRY_PATH: europe-west1-docker.pkg.dev/mower-planner/registry
+  GKE_PROJECT: mower-planner
+  GKE_ZONE: europe-west1-c
+  GKE_CLUSTER: cluster-mower-planner
+  DEPLOYMENT_NAME: mower-planner
 
 jobs:
   build-app:
@@ -47,16 +51,16 @@ jobs:
       env:
         APP_VERSION: ${{ steps.package-version.outputs.current-version }}
       run: |
-        gcloud auth configure-docker ${{ env.REGISTRY_LOCALE }}
-        docker build . --tag ${{ env.APP_NAME }}:${{ env.APP_VERSION }}
-        docker tag ${{ env.APP_NAME }}:${{ env.APP_VERSION }} ${{ env.REGISTRY_PATH }}/${{ env.APP_NAME }}:${{ env.APP_VERSION }}-${GITHUB_SHA::7}
-        docker tag ${{ env.APP_NAME }}:${{ env.APP_VERSION }} ${{ env.REGISTRY_PATH }}/${{ env.APP_NAME }}:beta
-        docker push ${{ env.REGISTRY_PATH }}/${{ env.APP_NAME }}:${{ env.APP_VERSION }}-${GITHUB_SHA::7}
-        docker push ${{ env.REGISTRY_PATH }}/${{ env.APP_NAME }}:beta
+        gcloud auth configure-docker $REGISTRY_LOCALE
+        docker build . --tag $APP_NAME:$APP_VERSION
+        docker tag $APP_NAME:$APP_VERSION $REGISTRY_PATH/$APP_NAME:$APP_VERSION-${GITHUB_SHA::7}
+        docker tag $APP_NAME:$APP_VERSION $REGISTRY_PATH/$APP_NAME:beta
+        docker push $REGISTRY_PATH/$APP_NAME:$APP_VERSION-${GITHUB_SHA::7}
+        docker push $REGISTRY_PATH/$APP_NAME:beta
 
-  package-chart:
+  deploy:
     runs-on: ubuntu-latest
-    needs: build-app
+    needs: build-image
     permissions:
       contents: 'read'
       id-token: 'write'
@@ -69,12 +73,14 @@ jobs:
       with:
         workload_identity_provider: ${{ secrets.GCLOUD_WORKLOAD_IDENTITY_PROVIDER }}
         service_account: ${{ secrets.GCLOUD_SVC_ACCOUNT }}
-        token_format: 'access_token'
-    - name: Package helm chart
-      run: helm package ./helm
-    - name: Configure gcloud
-      run: gcloud auth configure-docker ${{ env.REGISTRY_LOCALE }}
-    - name: Pushing Helm package to Artefact Registry
+    - name: Deploy to GKE
       run: |
-        helm version
-        helm push {{ env.APP_NAME }}-0.1.0.tgz "oci://{{ env.REGISTRY_PATH }}" --kube-token ${{ steps.auth.outputs.access_token }} --debug
+        gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GKE_PROJECT
+        helm upgrade $GKE_PROJECT ./helm --install \
+          --namespace mower-planner --create-namespace \
+          --set weatherapi.token=${{ secrets.WEATHER_API_TOKEN }},weatherapi.lat=${{ secrets.WEATHER_API_LAT }},weatherapi.lng=${{ secrets.WEATHER_API_LNG }} \
+          --set mower.app.key=${{ secrets.MOW_APP_KEY }},mower.app.secret=${{ secrets.MOW_APP_SECRET }},mower.user=${{ secrets.MOW_USER }},mower.password=${{ secrets.MOW_PASS }} \
+          --set mower.mowerid=${{ secrets.MOW_MOWER_ID }}
+          --wait
+        kubectl rollout status deployment/$DEPLOYMENT_NAME
+        kubectl get services -o wide

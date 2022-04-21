@@ -4,9 +4,9 @@ environment: production
 
 weatherapi:
   token:
-  latitude:
-  longitude:
-husqvarna:
+  lat:
+  lng:
+mower:
   app:
     key:
     secret:
