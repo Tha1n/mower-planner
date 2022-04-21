@@ -28,6 +28,8 @@ jobs:
         cache: "npm"
     - name: Build and test app
       uses: ./.github/actions/build-node
+      with:
+        testApp: true
 
   build-image:
     runs-on: ubuntu-latest
@@ -41,6 +43,15 @@ jobs:
     - name: Get app version from package.json
       id: package-version
       uses: martinbeentjes/npm-get-version-action@master
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+        cache: "npm"
+    - name: Build app
+      uses: ./.github/actions/build-node
+      with:
+        testApp: false
     - name: 'Authenticate to Google Cloud'
       id: 'auth'
       uses: 'google-github-actions/auth@v0'
@@ -80,7 +91,7 @@ jobs:
           --namespace mower-planner --create-namespace \
           --set weatherapi.token=${{ secrets.WEATHER_API_TOKEN }},weatherapi.lat=${{ secrets.WEATHER_API_LAT }},weatherapi.lng=${{ secrets.WEATHER_API_LNG }} \
           --set mower.app.key=${{ secrets.MOW_APP_KEY }},mower.app.secret=${{ secrets.MOW_APP_SECRET }},mower.user=${{ secrets.MOW_USER }},mower.password=${{ secrets.MOW_PASS }} \
-          --set mower.mowerid=${{ secrets.MOW_MOWER_ID }}
+          --set mower.mowerid=${{ secrets.MOW_MOWER_ID }} \
           --wait
         kubectl rollout status deployment/$DEPLOYMENT_NAME
         kubectl get services -o wide
