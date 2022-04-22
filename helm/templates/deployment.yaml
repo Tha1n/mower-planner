@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          image: europe-west1-docker.pkg.dev/mower-planner/registry/mower-planner:beta # FIXME
+          image: europe-west1-docker.pkg.dev/mower-planner/registry/mower-planner:latest
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
