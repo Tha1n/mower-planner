@@ -7,7 +7,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['config/local/config.local.env', 'config/config.env'],
+      envFilePath: ['config/secrets/secrets.env', 'config/config.env'],
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),

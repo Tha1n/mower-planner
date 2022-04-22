@@ -4,7 +4,7 @@ metadata:
   name: {{ .Chart.Name }}
 data:
   NODE_ENV: {{ .Values.environment }}
-  config.local.env: |
+  secrets.env: |
     WEATHER_API_TOKEN={{ .Values.weatherapi.token | quote }}
     WEATHER_API_LAT={{ .Values.weatherapi.lat | quote }}
     WEATHER_API_LNG={{ .Values.weatherapi.lng | quote }}
