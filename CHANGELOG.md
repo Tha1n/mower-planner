@@ -7,17 +7,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- Cron job to call weather service + stop or resume Husqvarna Mower
-- Healthchecks
-- Docker push to Google Artefacts Registry
 
 ### Changed
 
 ### Fixed
 
-## [1.0.0] - yyy-mm-dd
+## [0.0.2] - 2022-04-22
 
 ### Added
+- Cron job to call weather service + stop or resume Husqvarna Mower
+- Healthchecks
+- Docker push to Google Artefacts Registry
 
 ### Changed
 
