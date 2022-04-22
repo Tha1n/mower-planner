@@ -68,28 +68,3 @@ jobs:
         docker tag $APP_NAME:$APP_VERSION $REGISTRY_PATH/$APP_NAME:beta
         docker push $REGISTRY_PATH/$APP_NAME:$APP_VERSION-${GITHUB_SHA::7}
         docker push $REGISTRY_PATH/$APP_NAME:beta
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build-image
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-    - name: 'Authenticate to Google Cloud'
-      id: 'auth'
-      uses: 'google-github-actions/auth@v0'
-      with:
-        workload_identity_provider: ${{ secrets.GCLOUD_WORKLOAD_IDENTITY_PROVIDER }}
-        service_account: ${{ secrets.GCLOUD_SVC_ACCOUNT }}
-    - name: Deploy to GKE
-      run: |
-        gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GKE_PROJECT
-        helm upgrade $GKE_PROJECT ./helm --install \
-          --namespace mower-planner --create-namespace \
-          --set weatherapi.token=${{ secrets.WEATHER_API_TOKEN }},weatherapi.lat=${{ secrets.WEATHER_API_LAT }},weatherapi.lng=${{ secrets.WEATHER_API_LNG }} \
-          --set mower.app.key=${{ secrets.MOW_APP_KEY }},mower.app.secret=${{ secrets.MOW_APP_SECRET }},mower.user=${{ secrets.MOW_USER }},mower.password=${{ secrets.MOW_PASS }} \
-          --set mower.mowerid=${{ secrets.MOW_MOWER_ID }} \
-          --wait
