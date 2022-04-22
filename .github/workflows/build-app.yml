@@ -93,5 +93,3 @@ jobs:
           --set mower.app.key=${{ secrets.MOW_APP_KEY }},mower.app.secret=${{ secrets.MOW_APP_SECRET }},mower.user=${{ secrets.MOW_USER }},mower.password=${{ secrets.MOW_PASS }} \
           --set mower.mowerid=${{ secrets.MOW_MOWER_ID }} \
           --wait
-        kubectl rollout status deployment/$DEPLOYMENT_NAME
-        kubectl get services -o wide

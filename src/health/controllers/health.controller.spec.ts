@@ -38,22 +38,22 @@ describe('HealthController', () => {
   });
 
   describe('HealthController', () => {
-    it('should return a valid readyness probe', async () => {
-      const result = await healthController.ready();
+    it('should return a valid readyness probe', () => {
+      expect(healthController.ready()).toBe('READY');
+    });
+
+    it('should return a valid liveness probe', async () => {
+      const result = await healthController.live();
       expect(result.status).toBe('ok');
       expect(result.info.ConfigHealthIndicator.status).toBe('up');
     });
 
-    it('should return a down readyness probe', async () => {
+    it('should return a down liveness probe', async () => {
       // Remove key from mockedData
       delete mockedData.HUSQ_APP_KEY;
 
-      const result = healthController.ready();
+      const result = healthController.live();
       await expect(result).rejects.toThrow('Service Unavailable Exception');
-    });
-
-    it('should return a valid liveness probe', () => {
-      expect(healthController.live()).toBe('LIVE');
     });
   });
 });

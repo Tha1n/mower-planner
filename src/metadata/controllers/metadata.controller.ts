@@ -11,7 +11,7 @@ export class MetadataController {
 
   @Get()
   getInfo(): Metadata {
-    this._logger.log('Checking app health.');
+    this._logger.log('Getting app metadata.');
     return {
       appName: this._configService.get<string>(CFG_APP_NAME),
       description: this._configService.get<string>(CFG_APP_DESCRIPTION),

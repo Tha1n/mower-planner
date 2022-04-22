@@ -1,7 +1,6 @@
 {
     "recommendations": [
         "esbenp.prettier-vscode",
-        "joelday.docthis",
         "waderyan.gitblame",
         "vscode-icons-team.vscode-icons",
         "Gruntfuggly.todo-tree",
