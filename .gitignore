@@ -35,7 +35,7 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # Config & token
-/config/config.local.env
+*.local.env
 
 # Helm package or files
 *.tgz

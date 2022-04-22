@@ -10,10 +10,6 @@ env:
   APP_NAME: mower-planner
   REGISTRY_LOCALE: europe-west1-docker.pkg.dev
   REGISTRY_PATH: europe-west1-docker.pkg.dev/mower-planner/registry
-  GKE_PROJECT: mower-planner
-  GKE_ZONE: europe-west1-c
-  GKE_CLUSTER: cluster-mower-planner
-  DEPLOYMENT_NAME: mower-planner
 
 jobs:
   build-app:
@@ -43,6 +39,12 @@ jobs:
     - name: Get app version from package.json
       id: package-version
       uses: martinbeentjes/npm-get-version-action@master
+    - name: 'Authenticate to Google Cloud'
+      id: 'auth'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        workload_identity_provider: ${{ secrets.GCLOUD_WORKLOAD_IDENTITY_PROVIDER }}
+        service_account: ${{ secrets.GCLOUD_SVC_ACCOUNT }}
     - name: Use Node.js 16.x
       uses: actions/setup-node@v3
       with:
@@ -52,12 +54,6 @@ jobs:
       uses: ./.github/actions/build-node
       with:
         testApp: false
-    - name: 'Authenticate to Google Cloud'
-      id: 'auth'
-      uses: 'google-github-actions/auth@v0'
-      with:
-        workload_identity_provider: ${{ secrets.GCLOUD_WORKLOAD_IDENTITY_PROVIDER }}
-        service_account: ${{ secrets.GCLOUD_SVC_ACCOUNT }}
     - name: Build the Docker image and push to Artefact Registry
       env:
         APP_VERSION: ${{ steps.package-version.outputs.current-version }}

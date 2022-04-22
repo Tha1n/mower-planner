@@ -23,7 +23,7 @@ spec:
                 name: {{ .Chart.Name }}
           volumeMounts:
             - name: config-volume
-              mountPath: /home/node/app/config
+              mountPath: /home/node/app/config/local
           ports:
             - name: http
               containerPort: {{ .Values.appPort }}
@@ -34,7 +34,7 @@ spec:
               port: http
           readinessProbe:
             initialDelaySeconds: 5
-            periodSeconds: 1800 # Every 30mn
+            periodSeconds: 60
             httpGet:
               path: /health/ready
               port: http
