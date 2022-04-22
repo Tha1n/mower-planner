@@ -16,25 +16,33 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          image: europe-west1-docker.pkg.dev/mower-planner/registry/mower-planner:latest
+          image: europe-west1-docker.pkg.dev/mower-planner/registry/mower-planner:beta # FIXME
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
                 name: {{ .Chart.Name }}
           volumeMounts:
             - name: config-volume
-              mountPath: /config
+              mountPath: /home/node/app/config
           ports:
             - name: http
               containerPort: {{ .Values.appPort }}
               protocol: TCP
-          livenessProbe:
+          startupProbe:
             httpGet:
-              path: /health/live
+              path: /health/self
               port: http
           readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 1800 # Every 30mn
             httpGet:
               path: /health/ready
+              port: http
+          livenessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 1800 # Every 30mn
+            httpGet:
+              path: /health/live
               port: http
       volumes:
         - name: config-volume
