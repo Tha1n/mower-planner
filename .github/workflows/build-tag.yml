@@ -7,6 +7,15 @@ on:
   release:
     types: [created]
 
+
+env:
+  APP_NAME: mower-planner
+  REGISTRY_LOCALE: europe-west1-docker.pkg.dev
+  REGISTRY_PATH: europe-west1-docker.pkg.dev/mower-planner/registry
+  GKE_PROJECT: mower-planner
+  GKE_ZONE: europe-west1-c
+  GKE_CLUSTER: cluster-mower-planner
+
 jobs:
   build-app:
     runs-on: ubuntu-latest
@@ -20,6 +29,8 @@ jobs:
         cache: "npm"
     - name: Build and test app
       uses: ./.github/actions/build-node
+      with:
+        testApp: true
 
   build-image:
     runs-on: ubuntu-latest
@@ -39,16 +50,25 @@ jobs:
       with:
         workload_identity_provider: ${{ secrets.GCLOUD_WORKLOAD_IDENTITY_PROVIDER }}
         service_account: ${{ secrets.GCLOUD_SVC_ACCOUNT }}
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+        cache: "npm"
+    - name: Build app
+      uses: ./.github/actions/build-node
+      with:
+        testApp: false
     - name: Build the Docker image and push to Artefact Registry
       env:
         APP_VERSION: ${{ steps.package-version.outputs.current-version }}
       run: |
-        gcloud auth configure-docker ${{ env.REGISTRY_LOCALE }}
-        docker build . --tag ${{ env.APP_NAME }}:${{ env.APP_VERSION }}
-        docker tag ${{ env.APP_NAME }}:${{ env.APP_VERSION }} ${{ env.REGISTRY_PATH }}/${{ env.APP_NAME }}:${{ env.APP_VERSION }}-${GITHUB_SHA::7}
-        docker tag ${{ env.APP_NAME }}:${{ env.APP_VERSION }} ${{ env.REGISTRY_PATH }}/${{ env.APP_NAME }}:latest
-        docker push ${{ env.REGISTRY_PATH }}/${{ env.APP_NAME }}:${{ env.APP_VERSION }}-${GITHUB_SHA::7}
-        docker push ${{ env.REGISTRY_PATH }}/${{ env.APP_NAME }}:latest
+        gcloud auth configure-docker $REGISTRY_LOCALE
+        docker build . --tag $APP_NAME:$APP_VERSION
+        docker tag $APP_NAME:$APP_VERSION $REGISTRY_PATH/$APP_NAME:$APP_VERSION-${GITHUB_SHA::7}
+        docker tag $APP_NAME:$APP_VERSION $REGISTRY_PATH/$APP_NAME:latest
+        docker push $REGISTRY_PATH/$APP_NAME:$APP_VERSION-${GITHUB_SHA::7}
+        docker push $REGISTRY_PATH/$APP_NAME:latest
 
   # TODO: Fix it later. Uneeded but fun functionality
   # package-chart:
