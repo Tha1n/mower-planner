@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 ### Changed
+- Filter for logging. Now debug & verbose will not be log
 
 ### Fixed
 
