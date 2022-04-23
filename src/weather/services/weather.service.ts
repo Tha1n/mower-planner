@@ -36,8 +36,8 @@ export class WeatherService {
       maxRain += forecast?.rain?.['3h'] ?? 0;
     }
 
-    this._logger.debug(`Curr Humidity - ${maxHumidity} | Ref Humidity - ${humidityLevelReference}`);
-    this._logger.debug(`Curr Rain - ${maxRain} | Ref Rain - ${maxRainReference}`);
+    this._logger.log(`Curr Humidity - ${maxHumidity} | Ref Humidity - ${humidityLevelReference}`);
+    this._logger.log(`Curr Rain - ${maxRain} | Ref Rain - ${maxRainReference}`);
     return maxHumidity >= humidityLevelReference || maxRain >= maxRainReference;
   }
 

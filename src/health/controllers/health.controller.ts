@@ -11,7 +11,7 @@ export class HealthController {
   @Get('ready')
   @HealthCheck()
   ready(): string {
-    this._logger.log('Checking app readyness.');
+    this._logger.debug('Checking app readyness.');
     // App is always ready since no API path perform long treatment
     return 'READY';
   }
@@ -19,7 +19,7 @@ export class HealthController {
   @Get(['self', 'live'])
   @HealthCheck()
   async live(): Promise<HealthCheckResult> {
-    this._logger.log('Checking app liveness.');
+    this._logger.debug('Checking app liveness.');
     // Checking if configuration is efficient to enable app is start and alive
     return await this._health.check([() => this._configHealthIndicator.isHealthy()]);
   }
