@@ -9,7 +9,6 @@ describe('MetadataController', () => {
   const mockedData = {
     APP_NAME: 'DummyTestAppName',
     APP_DESCRIPTION: 'DummyTestAppDescription',
-    APP_VERSION: '0.0.0',
   };
 
   beforeEach(async () => {
@@ -42,7 +41,7 @@ describe('MetadataController', () => {
       const result: Metadata = metadataController.getInfo();
       expect(result.appName).toBe(mockedData.APP_NAME);
       expect(result.description).toBe(mockedData.APP_DESCRIPTION);
-      expect(result.version).toBe(mockedData.APP_VERSION);
+      expect(result.version).toBe('0.0.0');
       expect(result.uptime).toBe('0 Years, 0 Days, 00h00:00');
     });
   });

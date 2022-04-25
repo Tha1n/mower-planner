@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [0.0.4] - 2022-04-25
+
+### Added
 - SwaggerUI available on /swagger
 - New API Controller: Cron. Return cron data.
 
