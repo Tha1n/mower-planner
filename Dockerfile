@@ -1,4 +1,4 @@
-FROM node:16-alpine3.14 AS build
+FROM node:16-alpine3.14
 
 COPY --chown=node:node . /home/node/app
 COPY --chown=node:node docker-entrypoint.sh /docker-entrypoint.sh

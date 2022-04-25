@@ -1,9 +1,11 @@
 name: "node-build"
 description: "Build and test a node app"
 inputs:
-   testApp:
-     required: false
-     description: "Determine whether or not we test the code"
+  test-app:
+    description: "Determine whether or not we test the code"
+    type: boolean
+    required: true
+    default: false
 
 runs: 
   using: composite
@@ -13,5 +15,5 @@ runs:
     - run: npm run build --if-present
       shell: bash
     - run: npm test
-      if: ${{inputs.testApp == true}}
+      if: ${{ inputs.test-app == 'true' }}
       shell: bash

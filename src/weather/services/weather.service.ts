@@ -14,7 +14,7 @@ import {
   CFG_WTHR_RAIN_LVL,
   CFG_WTHR_UNIT,
 } from '../../assets/config.constants';
-import { Weather } from '../models/weather';
+import { Weather } from '../models/business/weather.business';
 
 @Injectable()
 export class WeatherService {
@@ -36,8 +36,8 @@ export class WeatherService {
       maxRain += forecast?.rain?.['3h'] ?? 0;
     }
 
-    this._logger.debug(`Curr Humidity - ${maxHumidity} | Ref Humidity - ${humidityLevelReference}`);
-    this._logger.debug(`Curr Rain - ${maxRain} | Ref Rain - ${maxRainReference}`);
+    this._logger.log(`Curr Humidity - ${maxHumidity} | Ref Humidity - ${humidityLevelReference}`);
+    this._logger.log(`Curr Rain - ${maxRain} | Ref Rain - ${maxRainReference}`);
     return maxHumidity >= humidityLevelReference || maxRain >= maxRainReference;
   }
 

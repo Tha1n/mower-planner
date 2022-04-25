@@ -1,1 +1,11 @@
-/config/local/config.local.env
+# Protect secrets
+/config/secrets/secrets.env
+
+# Remove useless files from the built image. Those folders nor files are not required for application to run.
+/src
+/test
+/.git
+/.github
+/.vscode
+/helm
+*.md
