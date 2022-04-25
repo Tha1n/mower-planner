@@ -1,7 +1,6 @@
 // Config constants for global data
 export const CFG_APP_NAME: string = `APP_NAME`;
 export const CFG_APP_DESCRIPTION: string = `APP_DESCRIPTION`;
-export const CFG_APP_VERSION: string = `APP_VERSION`;
 
 // Config constants for Weather
 export const CFG_WTHR_API_URL: string = `WEATHER_API_ENDPOINT`;
