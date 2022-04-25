@@ -7,11 +7,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- SwaggerUI available on /swagger
+- New API Controller: Cron. Return cron data.
 
 ### Changed
 - Filter for logging. Now debug & verbose will not be log
 
 ### Fixed
+- Remove useless files on Docker image
 
 ## [0.0.2] - 2022-04-22
 
