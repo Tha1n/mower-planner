@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger, Scope } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Agent } from 'https';
 import { catchError, EMPTY, firstValueFrom, Observable } from 'rxjs';
@@ -7,8 +7,7 @@ import { CFG_MWR_API_URL, CFG_MWR_ID, CFG_MWR_KEY } from '../../assets/config.co
 import { MowerActionsPayload, PAYLOAD_PARK, PAYLOAD_RESUME } from '../models/business/mower-actions-payload.business';
 import { MowerAuthService } from './mower-auth.service';
 
-// Specify service is Singleton (default behavior)
-@Injectable({ scope: Scope.DEFAULT })
+@Injectable()
 export class MowerService {
   private readonly _logger = new Logger(MowerService.name);
 
