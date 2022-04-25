@@ -30,7 +30,7 @@ jobs:
     - name: Build and test app
       uses: ./.github/actions/build-node
       with:
-        testApp: true
+        test-app: true
 
   build-image:
     runs-on: ubuntu-latest
@@ -58,17 +58,16 @@ jobs:
     - name: Build app
       uses: ./.github/actions/build-node
       with:
-        testApp: false
+        test-app: false
     - name: Build the Docker image and push to Artefact Registry
-      env:
-        APP_VERSION: ${{ steps.package-version.outputs.current-version }}
-      run: |
-        gcloud auth configure-docker $REGISTRY_LOCALE
-        docker build . --tag $APP_NAME:$APP_VERSION
-        docker tag $APP_NAME:$APP_VERSION $REGISTRY_PATH/$APP_NAME:$APP_VERSION-${GITHUB_SHA::7}
-        docker tag $APP_NAME:$APP_VERSION $REGISTRY_PATH/$APP_NAME:latest
-        docker push $REGISTRY_PATH/$APP_NAME:$APP_VERSION-${GITHUB_SHA::7}
-        docker push $REGISTRY_PATH/$APP_NAME:latest
+      uses: ./.github/actions/build-docker
+      with:
+        registryLocale: $REGISTRY_LOCALE
+        registryPath: $REGISTRY_PATH
+        appName: $APP_NAME
+        appVersion: ${{ steps.package-version.outputs.current-version }}
+        shortSha: ${GITHUB_SHA::7}
+        dockerTag: latest
 
   # TODO: Fix it later. Uneeded but fun functionality
   # package-chart:

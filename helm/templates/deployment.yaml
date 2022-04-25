@@ -23,7 +23,7 @@ spec:
                 name: {{ .Chart.Name }}
           volumeMounts:
             - name: config-volume
-              mountPath: /home/node/app/config/local
+              mountPath: /home/node/app/config/secrets
           ports:
             - name: http
               containerPort: {{ .Values.appPort }}
@@ -49,5 +49,5 @@ spec:
           configMap:
             name: {{ .Chart.Name }}
             items:
-            - key: config.local.env
-              path: config.local.env
+            - key: secrets.env
+              path: secrets.env
