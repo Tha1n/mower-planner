@@ -1,0 +1,37 @@
+name: "docker-build"
+description: "Build docker image and push it to Google Artefact Registry"
+inputs:
+  registryLocale:
+    required: true
+    description: "Define the registry locale."
+  registryPath:
+    required: true
+    description: "Define the registry path for image."
+  appName:
+    required: true
+    description: "Application name for image."
+  appVersion:
+    required: true
+    description: "Application version for image."
+  shortSha:
+    required: true
+    description: "SHA suffix for image."
+  dockerTag:
+    required: true
+    description: "Define the tag that will be affect to image (e.g.: alpha, beta, latest, ...)."
+
+runs: 
+  using: composite
+  steps:
+    - run: gcloud auth configure-docker ${{ inputs.registryLocale }}
+      shell: bash
+    - run: docker build . --tag ${{ inputs.appName }}:${{ inputs.appVersion }}
+      shell: bash
+    - run: docker tag ${{ inputs.appName }}:${{ inputs.appVersion }} ${{ inputs.registryPath}}/${{ inputs.appName }}:${{ inputs.appVersion }}-${{ inputs.shortSha }}
+      shell: bash
+    - run: docker tag ${{ inputs.appName }}:${{ inputs.appVersion }} ${{ inputs.registryPath}}/${{ inputs.appName }}:${{ inputs.dockerTag }}
+      shell: bash
+    - run: docker push ${{ inputs.registryPath}}/${{ inputs.appName }}:${{ inputs.appVersion }}-${GITHUB_SHA::7}
+      shell: bash
+    - run: docker push ${{ inputs.registryPath}}/${{ inputs.appName }}:${{ inputs.dockerTag }}
+      shell: bash
