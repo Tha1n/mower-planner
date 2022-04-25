@@ -14,7 +14,7 @@ import {
   CFG_WTHR_RAIN_LVL,
   CFG_WTHR_UNIT,
 } from '../../assets/config.constants';
-import { Weather } from '../models/weather';
+import { Weather } from '../models/business/weather.business';
 
 @Injectable()
 export class WeatherService {
