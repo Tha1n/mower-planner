@@ -8,8 +8,8 @@ import { Injectable, Logger } from '@nestjs/common';
  */
 @Injectable()
 export class RuntimeService {
-  private readonly logger = new Logger(RuntimeService.name);
-  private readonly env = process.env;
+  private readonly _logger = new Logger(RuntimeService.name);
+  private readonly _process = process;
 
   constructor() {}
 
@@ -20,7 +20,7 @@ export class RuntimeService {
    * @memberof RuntimeService
    */
   public get uptime(): number {
-    return process.uptime();
+    return this._process.uptime();
   }
 
   /**
@@ -30,6 +30,6 @@ export class RuntimeService {
    * @memberof RuntimeService
    */
   public get appVersion(): string {
-    return this.env.npm_package_version.toString();
+    return this._process.env.npm_package_version.toString();
   }
 }
