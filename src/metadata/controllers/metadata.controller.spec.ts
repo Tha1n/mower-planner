@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Metadata } from '../models/dto/metadata.dto';
+import { RuntimeService } from '../services/runtime.service';
 import { MetadataController } from './metadata.controller';
 
 describe('MetadataController', () => {
@@ -23,9 +24,15 @@ describe('MetadataController', () => {
             }),
           },
         },
+        {
+          provide: RuntimeService,
+          useValue: {
+            appVersion: '0.0.0',
+            uptime: 0,
+          },
+        },
       ],
     }).compile();
-    jest.spyOn(process, 'uptime').mockReturnValue(0);
 
     metadataController = app.get<MetadataController>(MetadataController);
   });
