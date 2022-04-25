@@ -4,6 +4,8 @@ import { AppModule } from './app.module';
 import {
   API_DESCRIPTION,
   API_TITLE,
+  CRON_API_DESCRIPTION,
+  CRON_API_TAG,
   HEALTH_API_DESCRIPTION,
   HEALTH_API_TAG,
   METADATA_API_DESCRIPTION,
@@ -25,6 +27,7 @@ async function bootstrap() {
     .setTitle(API_TITLE)
     .setDescription(API_DESCRIPTION)
     .setVersion(runtimeService.appVersion)
+    .addTag(CRON_API_TAG, CRON_API_DESCRIPTION)
     .addTag(METADATA_API_TAG, METADATA_API_DESCRIPTION)
     .addTag(HEALTH_API_TAG, HEALTH_API_DESCRIPTION)
     .build();

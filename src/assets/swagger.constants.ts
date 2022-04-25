@@ -7,3 +7,6 @@ export const METADATA_API_DESCRIPTION = `API route to retrieve API metadata.`;
 
 export const HEALTH_API_TAG = `Health`;
 export const HEALTH_API_DESCRIPTION = `API route to retrieve healthchekcs from server.`;
+
+export const CRON_API_TAG = `Cron`;
+export const CRON_API_DESCRIPTION = `API route to manipulate cron.`;
