@@ -1,8 +1,8 @@
 import { Controller, Get, Logger } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { HealthCheck, HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
-import { HEALTH_LIVE_ROUTE, HEALTH_READY_ROUTE, HEALTH_ROUTE, HEALTH_SELF_ROUTE } from 'src/assets/route.constants';
-import { HEALTH_API_TAG } from 'src/assets/swagger.constants';
+import { HEALTH_LIVE_ROUTE, HEALTH_READY_ROUTE, HEALTH_ROUTE, HEALTH_SELF_ROUTE } from '../../assets/route.constants';
+import { HEALTH_API_TAG } from '../../assets/swagger.constants';
 import { ConfigHealthIndicator } from '../services/config.health.service';
 
 @ApiTags(HEALTH_API_TAG)

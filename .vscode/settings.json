@@ -1,4 +1,5 @@
 {
+    "typescript.preferences.importModuleSpecifier": "relative",
     "[typescript]": {
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
@@ -36,6 +37,5 @@
             "opacity": 50,
             "type": "line"
         }
-    },
-    "debug.node.autoAttach": "off"
+    }
 }

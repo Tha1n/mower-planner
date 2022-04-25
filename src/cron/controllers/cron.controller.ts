@@ -1,9 +1,9 @@
 import { Controller, Get, Logger } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { CRON_NEVER_RUN, MOWER_CRON_NAME } from 'src/assets/cron.constants';
-import { CRON_ROUTE, CRON_STATE_ROUTE } from 'src/assets/route.constants';
-import { CRON_API_TAG } from 'src/assets/swagger.constants';
+import { CRON_NEVER_RUN, MOWER_CRON_NAME } from '../../assets/cron.constants';
+import { CRON_ROUTE, CRON_STATE_ROUTE } from '../../assets/route.constants';
+import { CRON_API_TAG } from '../../assets/swagger.constants';
 import { CronData } from '../models/dto/cron-data.dto';
 
 @ApiTags(CRON_API_TAG)

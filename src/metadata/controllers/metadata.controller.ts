@@ -1,9 +1,9 @@
 import { Controller, Get, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { METADATA_ROUTE } from 'src/assets/route.constants';
-import { METADATA_API_TAG } from 'src/assets/swagger.constants';
 import { CFG_APP_DESCRIPTION, CFG_APP_NAME } from '../../assets/config.constants';
+import { METADATA_ROUTE } from '../../assets/route.constants';
+import { METADATA_API_TAG } from '../../assets/swagger.constants';
 import { Metadata } from '../models/dto/metadata.dto';
 import { RuntimeService } from '../services/runtime.service';
 
