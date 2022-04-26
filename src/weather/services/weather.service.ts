@@ -3,15 +3,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AxiosResponse } from 'axios';
 import { Agent } from 'https';
-import { catchError, EMPTY, firstValueFrom, map, Observable } from 'rxjs';
+import { catchError, firstValueFrom, map, Observable } from 'rxjs';
 import {
   CFG_WTHR_API_TOKEN,
   CFG_WTHR_API_URL,
   CFG_WTHR_FORECAST_NB,
-  CFG_WTHR_HUM_LVL,
   CFG_WTHR_LAT,
   CFG_WTHR_LNG,
-  CFG_WTHR_RAIN_LVL,
   CFG_WTHR_UNIT,
 } from '../../assets/config.constants';
 import { Weather } from '../models/business/weather.business';
@@ -22,10 +20,7 @@ export class WeatherService {
 
   constructor(private readonly _configService: ConfigService, private readonly _http: HttpService) {}
 
-  public async isWeatherRainy(): Promise<boolean> {
-    const humidityLevelReference: number = Number(this._configService.get(CFG_WTHR_HUM_LVL));
-    const maxRainReference: number = Number(this._configService.get(CFG_WTHR_RAIN_LVL));
-
+  public async getRainfallData(): Promise<{ humidity: number; rain: number }> {
     let weatherData: Weather = await this.getWeatherData();
     let maxHumidity = 0;
     let maxRain = 0;
@@ -36,9 +31,7 @@ export class WeatherService {
       maxRain += forecast?.rain?.['3h'] ?? 0;
     }
 
-    this._logger.log(`Curr Humidity - ${maxHumidity} | Ref Humidity - ${humidityLevelReference}`);
-    this._logger.log(`Curr Rain - ${maxRain} | Ref Rain - ${maxRainReference}`);
-    return maxHumidity >= humidityLevelReference || maxRain >= maxRainReference;
+    return { humidity: maxHumidity, rain: maxRain };
   }
 
   private getWeatherData(): Promise<Weather> {
@@ -59,7 +52,7 @@ export class WeatherService {
         }),
         catchError((err: any) => {
           this._logger.error(`The following error occured when calling weather service: ${err}`);
-          return EMPTY;
+          throw err; // Rethrow error to ensure caller will detect an error event
         }),
       );
 

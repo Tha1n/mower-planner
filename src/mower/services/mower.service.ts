@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Agent } from 'https';
-import { catchError, EMPTY, firstValueFrom, Observable } from 'rxjs';
+import { catchError, firstValueFrom, Observable } from 'rxjs';
 import { CFG_MWR_API_URL, CFG_MWR_ID, CFG_MWR_KEY } from '../../assets/config.constants';
 import { MowerActionsPayload, PAYLOAD_PARK, PAYLOAD_RESUME } from '../models/business/mower-actions-payload.business';
 import { MowerAuthService } from './mower-auth.service';
@@ -28,7 +28,7 @@ export class MowerService {
       ).pipe(
         catchError((err: any) => {
           this._logger.error(`Unexpected error when trying to stop mower: ${err}`);
-          return EMPTY;
+          throw err;
         }),
       ),
     );
@@ -45,7 +45,7 @@ export class MowerService {
       ).pipe(
         catchError((err: any) => {
           this._logger.error(`Unexpected error when trying to resume schedule of mower: ${err}`);
-          return EMPTY;
+          throw err;
         }),
       ),
     );

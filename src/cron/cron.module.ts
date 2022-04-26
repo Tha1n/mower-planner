@@ -6,8 +6,8 @@ import { MowerModule } from '../mower/mower.module';
 import { WeatherModule } from '../weather/weather.module';
 import { CronController } from './controllers/cron.controller';
 import { JobLog, JobLogSchema } from './models/dao/job-log.dao';
+import { CronLoggingService } from './services/cron-logging.service';
 import { MowerEndpointCron } from './services/cron/mower-endpoint.cron';
-import { JobLoggingService } from './services/job-logging.service';
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { JobLoggingService } from './services/job-logging.service';
     // Cron services
     MowerEndpointCron,
     // Other services
-    JobLoggingService,
+    CronLoggingService,
   ],
 })
 export class CronModule {}
