@@ -20,3 +20,10 @@ export const CFG_MWR_SECRET: string = `HUSQ_APP_SECRET`;
 export const CFG_MWR_USR: string = `HUSQ_USER`;
 export const CFG_MWR_PWD: string = `HUSQ_PWD`;
 export const CFG_MWR_ID: string = `HUSQ_MOWER_ID`;
+
+// Config constants for DB
+export const DB_URL: string = `DB_URL`;
+export const DB_PORT: string = `DB_PORT`;
+export const DB_USER: string = `DB_USER`;
+export const DB_PASS: string = `DB_PASS`;
+export const DB_NAME: string = `DB_NAME`;

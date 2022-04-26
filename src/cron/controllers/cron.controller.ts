@@ -18,7 +18,7 @@ export class CronController {
     description: 'Indicates cron jobs data.',
     type: CronData,
   })
-  ready(): CronData {
+  public getCronData(): CronData {
     this._logger.verbose('Checking cron data.');
 
     let result: CronData = {};

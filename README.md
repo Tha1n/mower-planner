@@ -16,6 +16,24 @@ This project was also the opportunity to test Github Actions and Google Cloud Pl
 
 ### Installation & running app (locally)
 
+First, you need to create a file that will contains the secrets for Mower-Planner app. This file will be `config/secrets/secrets.env`. App is configure to read it.
+The content will be sort of:
+```env
+WEATHER_API_TOKEN="YourWeatherApiToken"
+# My Home Data
+WEATHER_API_LAT="Latitude of your Home"
+WEATHER_API_LNG="Longitude of your Home"
+
+# Husqvarna APP Data
+HUSQ_APP_KEY="Husqvarna API KEY (see Husqvarna docs to know about it)"
+HUSQ_APP_SECRET="Husqvarna API SECRET (see Husqvarna docs to know about it)"
+# Husqvarna USER Data
+HUSQ_USER="Husqvarna user"
+HUSQ_PWD="Husqvarna password"
+# Husqvarna MOWER Data
+HUSQ_MOWER_ID="Your mower ID"
+```
+
 ```bash
 $ npm install
 

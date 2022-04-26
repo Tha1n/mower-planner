@@ -3,12 +3,17 @@ import { Cron } from '@nestjs/schedule';
 import { MOWER_CRON_DEFAULT_SETTING, MOWER_CRON_NAME } from '../../../assets/cron.constants';
 import { MowerService } from '../../../mower/services/mower.service';
 import { WeatherService } from '../../../weather/services/weather.service';
+import { JobLoggingService } from '../job-logging.service';
 
 @Injectable()
 export class MowerEndpointCron {
   private readonly _logger = new Logger(MowerEndpointCron.name);
 
-  constructor(private readonly _weatherService: WeatherService, private readonly _mowerService: MowerService) {}
+  constructor(
+    private readonly _weatherService: WeatherService,
+    private readonly _mowerService: MowerService,
+    private _jobLoggingService: JobLoggingService,
+  ) {}
 
   @Cron(MOWER_CRON_DEFAULT_SETTING, {
     name: MOWER_CRON_NAME,
@@ -17,6 +22,8 @@ export class MowerEndpointCron {
   async handleMowerSchedule() {
     // Start script
     this._logger.log('Mower Cron START.');
+    this._jobLoggingService.initLog(MOWER_CRON_NAME);
+
     // Call Weather service to retrieve data
     const isWeatherRainy = await this._weatherService.isWeatherRainy();
 
@@ -29,6 +36,7 @@ export class MowerEndpointCron {
       this._logger.log('Weather is not rainy, need to restore or let the actual schedule.');
       await this._mowerService.resumeScheduleMower();
     }
+    this._jobLoggingService.completeLog();
     this._logger.log('Mower Cron DONE.');
     // End of script
   }

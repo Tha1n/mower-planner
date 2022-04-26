@@ -1,10 +1,10 @@
-export interface JobLog {
+export interface JobLogBusiness {
   date: Date;
   cronName: string;
-  logs: StepLog[];
+  logs: StepLogBusiness[];
 }
 
-export interface StepLog {
+export interface StepLogBusiness {
   date: Date;
   author: string;
   message: string;
