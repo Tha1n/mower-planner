@@ -12,6 +12,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
+## [0.0.5] - 2022-05-04
+
+### Added
+
+### Changed
+
+### Fixed
+- PR #9
+- PR #10
+- PR #11
+- PR #12
+- PR #13
+
 ## [0.0.4] - 2022-04-25
 
 ### Added
