@@ -12,11 +12,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
+## [0.0.6] - 2022-05-09
+
+### Fixed
+- Fix bug on authentication where first error does not clear properly data and then the service crash on every request to Husqvarna account
+
 ## [0.0.5] - 2022-05-04
-
-### Added
-
-### Changed
 
 ### Fixed
 - PR #9
@@ -43,7 +44,3 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Cron job to call weather service + stop or resume Husqvarna Mower
 - Healthchecks
 - Docker push to Google Artefacts Registry
-
-### Changed
-
-### Fixed
