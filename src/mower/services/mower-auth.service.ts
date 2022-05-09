@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { AxiosResponse } from 'axios';
 import { Agent } from 'https';
-import { catchError, EMPTY, firstValueFrom, map, Observable } from 'rxjs';
+import { catchError, firstValueFrom, map, Observable } from 'rxjs';
 import { URLSearchParams } from 'url';
 import { CFG_MWR_AUTH_API_URL, CFG_MWR_KEY, CFG_MWR_PWD, CFG_MWR_USR } from '../../assets/config.constants';
 import { MowerAuthResponse } from '../models/business/auth-response.business';
@@ -26,32 +26,26 @@ export class MowerAuthService {
   }
 
   public async getAuthToken(): Promise<string> {
-    // No token, we need to retrieve it
-    if (!this._token) {
+    // I have a token but it is expired
+    if (this.isTokenExists() && (await this.isTokenExpired())) {
+      this._logger.log('Token expired, refresh it.');
+      await this.refreshToken();
+    } else if (!this.isTokenExists()) {
+      // No token, we need to retrieve it
       this._logger.log('No token, retrieve it.');
       await this.getToken();
-    } else if (await this.isTokenExpired()) {
-      this._logger.log('Token expired, refresh it.');
-      // If token expired, refresh it
-      await this.refreshToken();
+    }
+
+    // Ceintures bretelles pour trouver la root cause d'un bug récurrent de token ...
+    if (!this.isTokenExists()) {
+      this._logger.error(
+        `Something went wrong when retrieving token or refreshing it ! Throwing error to ensure not using it.`,
+      );
+      throw new Error(`No token available to call mower services !`);
     }
 
     // Return token
     return this._token;
-  }
-
-  /**
-   * Check if token is expired
-   * @returns true if expired, false otherwise
-   */
-  private async isTokenExpired(): Promise<boolean> {
-    try {
-      await this._jwtService.verifyAsync(this._token);
-    } catch (error) {
-      if (error.name === 'TokenExpiredError') return true;
-    }
-
-    return false;
   }
 
   /**
@@ -68,7 +62,8 @@ export class MowerAuthService {
       this.authenticateApi$(params).pipe(
         catchError((err: any) => {
           this._logger.error(`The following error occured when getting access_token: ${err}`);
-          return EMPTY;
+          this.onError();
+          throw err;
         }),
       ),
     );
@@ -86,7 +81,8 @@ export class MowerAuthService {
       this.authenticateApi$(params).pipe(
         catchError((err: any) => {
           this._logger.error(`The following error occured when trying to refresh token: ${err}`);
-          return EMPTY;
+          this.onError();
+          throw err;
         }),
       ),
     );
@@ -109,10 +105,37 @@ export class MowerAuthService {
         }),
         catchError((e) => {
           // Simply clear tokens before rethrow err
-          this._token = '';
-          this._refreshToken = '';
+          this.onError();
           throw e;
         }),
       );
+  }
+
+  /**
+   * Check if token is expired
+   * @returns true if expired, false otherwise
+   */
+  private async isTokenExpired(): Promise<boolean> {
+    try {
+      await this._jwtService.verifyAsync(this._token);
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') return true;
+    }
+
+    return false;
+  }
+
+  private isTokenExists(): boolean {
+    return !!this._token;
+  }
+
+  /**
+   * Clear local data on error
+   * @private
+   * @memberof MowerAuthService
+   */
+  private onError(): void {
+    this._token = '';
+    this._refreshToken = '';
   }
 }
