@@ -1,7 +1,7 @@
 apiVersion: v1
 version: 0.0.2
 name: mower-planner
-appVersion: 0.0.6
+appVersion: 0.0.7
 description: Mower-Planner helm chart
 
 maintainers:

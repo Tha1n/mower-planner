@@ -119,7 +119,9 @@ export class MowerAuthService {
     try {
       await this._jwtService.verifyAsync(this._token);
     } catch (error) {
-      if (error.name === 'TokenExpiredError') return true;
+      // Whatever it happened, return true since if the token is unvalid, we need to refresh it
+      this._logger.error(`JWT verification failed with the reason: ${error}`);
+      return true;
     }
 
     return false;
