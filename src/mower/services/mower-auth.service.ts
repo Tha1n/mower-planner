@@ -1,9 +1,9 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, Scope } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { AxiosResponse } from 'axios';
 import { Agent } from 'https';
+import * as moment from 'moment';
 import { catchError, firstValueFrom, map, Observable } from 'rxjs';
 import { URLSearchParams } from 'url';
 import { CFG_MWR_AUTH_API_URL, CFG_MWR_KEY, CFG_MWR_PWD, CFG_MWR_USR } from '../../assets/config.constants';
@@ -15,19 +15,17 @@ export class MowerAuthService {
   private readonly _logger = new Logger(MowerAuthService.name);
   private _token: string;
   private _refreshToken: string;
+  private _expireAt: moment.Moment;
 
-  constructor(
-    private readonly _configService: ConfigService,
-    private readonly _http: HttpService,
-    private readonly _jwtService: JwtService,
-  ) {
+  constructor(private readonly _configService: ConfigService, private readonly _http: HttpService) {
     this._token = '';
     this._refreshToken = '';
+    this._expireAt = undefined;
   }
 
   public async getAuthToken(): Promise<string> {
     // I have a token but it is expired
-    if (this.isTokenExists() && (await this.isTokenExpired())) {
+    if (this.isTokenExists() && this.isTokenExpired()) {
       this._logger.log('Token expired, refresh it.');
       await this.refreshToken();
     } else if (!this.isTokenExists()) {
@@ -44,6 +42,7 @@ export class MowerAuthService {
       throw new Error(`No token available to call mower services !`);
     }
 
+    this._logger.log('Returning current token.');
     // Return token
     return this._token;
   }
@@ -67,8 +66,8 @@ export class MowerAuthService {
         }),
       ),
     );
-    this._token = authData.access_token;
-    this._refreshToken = authData.refresh_token;
+
+    this.saveAuthData(authData);
   }
 
   private async refreshToken(): Promise<void> {
@@ -86,8 +85,19 @@ export class MowerAuthService {
         }),
       ),
     );
+
+    this.saveAuthData(authData);
+  }
+
+  /**
+   * Save authentication data for further use
+   * @param {MowerAuthResponse} authData
+   * @memberof MowerAuthService
+   */
+  private saveAuthData(authData: MowerAuthResponse): void {
     this._token = authData.access_token;
     this._refreshToken = authData.refresh_token;
+    this._expireAt = moment().add(authData.expires_in, 'seconds');
   }
 
   private authenticateApi$(params: URLSearchParams): Observable<MowerAuthResponse> {
@@ -115,16 +125,8 @@ export class MowerAuthService {
    * Check if token is expired
    * @returns true if expired, false otherwise
    */
-  private async isTokenExpired(): Promise<boolean> {
-    try {
-      await this._jwtService.verifyAsync(this._token);
-    } catch (error) {
-      // Whatever it happened, return true since if the token is unvalid, we need to refresh it
-      this._logger.error(`JWT verification failed with the reason: ${error}`);
-      return true;
-    }
-
-    return false;
+  private isTokenExpired(): boolean {
+    return moment().isAfter(this._expireAt);
   }
 
   private isTokenExists(): boolean {
