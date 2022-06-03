@@ -15,30 +15,58 @@ import {
   CFG_WTHR_UNIT,
 } from '../../assets/config.constants';
 import { Weather } from '../models/business/weather.business';
+import { WeatherLog } from '../models/dao/weather-log.dao';
+import { WeatherDaoService } from './weather-dao.service';
 
 @Injectable()
 export class WeatherService {
   private readonly _logger = new Logger(WeatherService.name);
 
-  constructor(private readonly _configService: ConfigService, private readonly _http: HttpService) {}
+  constructor(
+    private readonly _configService: ConfigService,
+    private readonly _http: HttpService,
+    private readonly dao: WeatherDaoService,
+  ) {}
 
   public async isWeatherRainy(): Promise<boolean> {
     const humidityLevelReference: number = Number(this._configService.get(CFG_WTHR_HUM_LVL));
     const maxRainReference: number = Number(this._configService.get(CFG_WTHR_RAIN_LVL));
 
+    // Retrieve weather data through external API
     let weatherData: Weather = await this.getWeatherData();
-    let maxHumidity = 0;
-    let maxRain = 0;
+
+    // Simple loop to sum up rainfall and humidity (to compute avg humidity further)
+    // Better than using map/reduce
+    let sumHumid: number = 0;
+    let sumRain: number = 0;
     for (const forecast of weatherData.list) {
-      // Search the highest humidity level
-      if (forecast.main.humidity > maxHumidity) maxHumidity = forecast.main.humidity;
-      // Add rain level for each forecast (possibly undefined then test it)
-      maxRain += forecast?.rain?.['3h'] ?? 0;
+      sumRain += forecast?.rain?.['3h'] ?? 0;
+      sumHumid += forecast.main.humidity;
     }
 
-    this._logger.log(`Curr Humidity - ${maxHumidity} | Ref Humidity - ${humidityLevelReference}`);
-    this._logger.log(`Curr Rain - ${maxRain} | Ref Rain - ${maxRainReference}`);
-    return maxHumidity >= humidityLevelReference || maxRain >= maxRainReference;
+    // Save data to DB
+    const savedLog = await this.dao.saveLog({
+      date: new Date(),
+      avgHumidity: Math.round((sumHumid / weatherData.list.length) * 100) / 100,
+      rain: sumRain,
+    } as WeatherLog);
+    this._logger.log(`New weather log added with id <${savedLog._id}>`);
+
+    // Check rainfall
+    this._logger.log(`Curr Rain - ${sumRain} | Ref Rain - ${maxRainReference}`);
+    if (sumRain >= maxRainReference) {
+      return true;
+    }
+
+    // If rainfall is OK, check humidity average levels
+    const humidityLevels: number[] = this.dao.getLastHumidityLevels();
+    const avgHumidityLevel: number = humidityLevels.reduce((prev, curr) => prev + curr, 0) / humidityLevels.length;
+    this._logger.log(`Avg Humidity - ${avgHumidityLevel} | Ref Avg Humidity - ${humidityLevelReference}`);
+    if (avgHumidityLevel >= humidityLevelReference) {
+      return true;
+    }
+
+    return false;
   }
 
   private getWeatherData(): Promise<Weather> {
