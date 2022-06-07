@@ -15,6 +15,6 @@ import { WeatherService } from './services/weather.service';
     MongooseModule.forFeature([{ name: WeatherLog.name, schema: WeatherLogSchema }]),
   ],
   providers: [WeatherService, WeatherDaoService],
-  exports: [WeatherService],
+  exports: [WeatherService, WeatherDaoService],
 })
 export class WeatherModule {}

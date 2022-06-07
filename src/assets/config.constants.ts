@@ -7,8 +7,6 @@ export const CFG_WTHR_API_URL: string = `WEATHER_API_ENDPOINT`;
 export const CFG_WTHR_API_TOKEN: string = `WEATHER_API_TOKEN`;
 export const CFG_WTHR_LAT: string = `WEATHER_API_LAT`;
 export const CFG_WTHR_LNG: string = `WEATHER_API_LNG`;
-export const CFG_WTHR_UNIT: string = `WEATHER_API_UNIT`;
-export const CFG_WTHR_FORECAST_NB: string = `WEATHER_API_FORECAST_NB`;
 export const CFG_WTHR_HUM_LVL: string = `MAX_HUMIDITY_LEVEL`;
 export const CFG_WTHR_RAIN_LVL: string = `MAX_RAIN_LEVEL`;
 
