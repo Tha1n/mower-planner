@@ -30,7 +30,6 @@ export class RuntimeService {
    * @memberof RuntimeService
    */
   public get appVersion(): string {
-    console.log(this._process.env);
     return this._process.env.npm_package_version?.toString() ?? '0.0.0';
   }
 }

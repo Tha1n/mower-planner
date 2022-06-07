@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { TerminusModule } from '@nestjs/terminus';
+import { MongooseHealthIndicator, TerminusModule } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigHealthIndicator } from '../services/config.health.service';
 import { HealthController } from './health.controller';
@@ -28,6 +28,14 @@ describe('HealthController', () => {
           useValue: {
             get: jest.fn((key: string) => {
               return mockedData[key];
+            }),
+          },
+        },
+        {
+          provide: MongooseHealthIndicator,
+          useValue: {
+            pingCheck: jest.fn(() => {
+              return true;
             }),
           },
         },
