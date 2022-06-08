@@ -7,49 +7,97 @@ import { catchError, EMPTY, firstValueFrom, map, Observable } from 'rxjs';
 import {
   CFG_WTHR_API_TOKEN,
   CFG_WTHR_API_URL,
-  CFG_WTHR_FORECAST_NB,
   CFG_WTHR_HUM_LVL,
   CFG_WTHR_LAT,
   CFG_WTHR_LNG,
   CFG_WTHR_RAIN_LVL,
-  CFG_WTHR_UNIT,
 } from '../../assets/config.constants';
-import { Weather } from '../models/business/weather.business';
+import { ShortForecast, Weather } from '../models/business/weather.business';
+import { WeatherLog } from '../models/dao/weather-log.dao';
+import { WeatherDaoService } from './weather-dao.service';
 
 @Injectable()
 export class WeatherService {
   private readonly _logger = new Logger(WeatherService.name);
 
-  constructor(private readonly _configService: ConfigService, private readonly _http: HttpService) {}
+  constructor(
+    private readonly _configService: ConfigService,
+    private readonly _http: HttpService,
+    private readonly dao: WeatherDaoService,
+  ) {}
 
+  /**
+   * Determine wether or not the weather is rainy or contains too much humidity
+   * @return {*}  {Promise<boolean>}
+   * @memberof WeatherService
+   */
   public async isWeatherRainy(): Promise<boolean> {
     const humidityLevelReference: number = Number(this._configService.get(CFG_WTHR_HUM_LVL));
     const maxRainReference: number = Number(this._configService.get(CFG_WTHR_RAIN_LVL));
 
-    let weatherData: Weather = await this.getWeatherData();
-    let maxHumidity = 0;
-    let maxRain = 0;
-    for (const forecast of weatherData.list) {
-      // Search the highest humidity level
-      if (forecast.main.humidity > maxHumidity) maxHumidity = forecast.main.humidity;
-      // Add rain level for each forecast (possibly undefined then test it)
-      maxRain += forecast?.rain?.['3h'] ?? 0;
+    // Retrieve logs from DB
+    const logs: WeatherLog[] = await this.dao.getLastLogs(2);
+    const lastLog = logs[0];
+
+    // Check rainfall
+    this._logger.log(`Curr Rain - ${lastLog.rain} | Ref Rain - ${maxRainReference}`);
+    if (lastLog.rain >= maxRainReference) {
+      return true;
     }
 
-    this._logger.log(`Curr Humidity - ${maxHumidity} | Ref Humidity - ${humidityLevelReference}`);
-    this._logger.log(`Curr Rain - ${maxRain} | Ref Rain - ${maxRainReference}`);
-    return maxHumidity >= humidityLevelReference || maxRain >= maxRainReference;
+    // If rainfall is OK, check humidity average levels
+    const avgHumidityLevel: number =
+      logs.map((l: WeatherLog) => l.avgHumidity).reduce((prev, curr) => prev + curr, 0) / logs.length;
+    this._logger.log(`Avg Humidity - ${avgHumidityLevel} | Ref Avg Humidity - ${humidityLevelReference}`);
+    if (avgHumidityLevel >= humidityLevelReference) {
+      return true;
+    }
+
+    return false;
   }
 
-  private getWeatherData(): Promise<Weather> {
+  /**
+   * Convert forecast list to unique Weather Log (sum or average computed here)
+   * @param {ShortForecast[]} forecasts Forecast list
+   * @return {*}  {WeatherLog} The log matching input data
+   * @memberof WeatherService
+   */
+  public convertToLog(forecasts: ShortForecast[]): WeatherLog {
+    // Simple loop to sum up rainfall and humidity (to compute avg humidity further)
+    // Better than using map/reduce
+    let sumHumid: number = 0;
+    let sumRain: number = 0;
+    for (const forecast of forecasts) {
+      sumRain += forecast?.rain?.['3h'] ?? 0;
+      sumHumid += forecast.main.humidity;
+    }
+
+    return {
+      date: new Date(),
+      avgHumidity: Math.round((sumHumid / forecasts.length) * 100) / 100,
+      rain: sumRain,
+    } as WeatherLog;
+  }
+
+  /**
+   * Retrieve ShortForecast on Weather API
+   * @param {number} hours The max hour you want a forecast. Must be a multiple of 3
+   * @return {*}  {Promise<ShortForecast[]>} The forecasts list
+   * @memberof WeatherService
+   */
+  public async getForecasts(hours: number): Promise<ShortForecast[]> {
+    if (hours % 3 !== 0) {
+      throw new Error(`Provided "hours" parameters is not a multiple of 3. Receive <${hours}>.`);
+    }
+
     let $weather: Observable<AxiosResponse<Weather>> = this._http
       .get<Weather>(this._configService.get(CFG_WTHR_API_URL), {
         params: {
           lat: this._configService.get(CFG_WTHR_LAT),
           lon: this._configService.get(CFG_WTHR_LNG),
           appid: this._configService.get(CFG_WTHR_API_TOKEN),
-          units: this._configService.get(CFG_WTHR_UNIT),
-          cnt: this._configService.get(CFG_WTHR_FORECAST_NB),
+          units: 'metric',
+          cnt: hours / 3,
         },
         httpsAgent: new Agent({ rejectUnauthorized: false }),
       })
@@ -62,7 +110,8 @@ export class WeatherService {
           return EMPTY;
         }),
       );
+    const weather = await firstValueFrom($weather, { defaultValue: undefined });
 
-    return firstValueFrom($weather, { defaultValue: undefined });
+    return (weather as Weather).list;
   }
 }

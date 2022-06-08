@@ -5,8 +5,8 @@ import { MowerService } from '../../mower/services/mower.service';
 import { WeatherService } from '../../weather/services/weather.service';
 
 @Injectable()
-export class MowerEndpointCron {
-  private readonly _logger = new Logger(MowerEndpointCron.name);
+export class MowerCron {
+  private readonly _logger = new Logger(MowerCron.name);
 
   constructor(private readonly _weatherService: WeatherService, private readonly _mowerService: MowerService) {}
 
@@ -17,7 +17,7 @@ export class MowerEndpointCron {
   async handleMowerSchedule() {
     // Start script
     this._logger.log('Mower Cron START.');
-    // Call Weather service to retrieve data
+    // Call Weather service to determine if weather is rainy
     const isWeatherRainy = await this._weatherService.isWeatherRainy();
 
     // We need to stop the mower schedule

@@ -1,6 +1,6 @@
 import { Controller, Get, Logger } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { HealthCheck, HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
+import { HealthCheck, HealthCheckResult, HealthCheckService, MongooseHealthIndicator } from '@nestjs/terminus';
 import { HEALTH_LIVE_ROUTE, HEALTH_READY_ROUTE, HEALTH_ROUTE, HEALTH_SELF_ROUTE } from '../../assets/route.constants';
 import { HEALTH_API_TAG } from '../../assets/swagger.constants';
 import { ConfigHealthIndicator } from '../services/config.health.service';
@@ -11,7 +11,11 @@ export class HealthController {
   private readonly _logger = new Logger(HealthController.name);
   private readonly READY: string = 'READY';
 
-  constructor(private readonly _health: HealthCheckService, private _configHealthIndicator: ConfigHealthIndicator) {}
+  constructor(
+    private readonly _health: HealthCheckService,
+    private _configHealthIndicator: ConfigHealthIndicator,
+    private _mongoHealthIndicator: MongooseHealthIndicator,
+  ) {}
 
   @Get(HEALTH_READY_ROUTE)
   @ApiOkResponse({
@@ -29,6 +33,9 @@ export class HealthController {
   async live(): Promise<HealthCheckResult> {
     this._logger.verbose('Checking app liveness.');
     // Checking if configuration is efficient to enable app is start and alive
-    return await this._health.check([() => this._configHealthIndicator.isHealthy()]);
+    return await this._health.check([
+      () => this._configHealthIndicator.isHealthy(),
+      () => this._mongoHealthIndicator.pingCheck('mongo'),
+    ]);
   }
 }

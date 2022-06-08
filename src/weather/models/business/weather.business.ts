@@ -34,13 +34,6 @@ export interface Main {
   temp_kf: number;
 }
 
-export interface Weather {
-  id: number;
-  main: string;
-  description: string;
-  icon: string;
-}
-
 export interface Clouds {
   all: number;
 }
