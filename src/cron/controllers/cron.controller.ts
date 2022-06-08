@@ -27,12 +27,12 @@ export class CronController {
 
     result[MOWER_CRON_NAME] = {
       lastRun: mowerCronJob.lastDate() ?? CRON_NEVER_RUN,
-      nextRun: mowerCronJob.nextDate(),
+      nextRun: new Date(mowerCronJob.nextDate().toString()),
       isRunning: mowerCronJob.running,
     };
     result[WEATHER_CRON_NAME] = {
       lastRun: weatherCronJob.lastDate() ?? CRON_NEVER_RUN,
-      nextRun: weatherCronJob.nextDate(),
+      nextRun: new Date(weatherCronJob.nextDate().toString()),
       isRunning: weatherCronJob.running,
     };
 

@@ -16,10 +16,10 @@ export class JobData {
   lastRun: Date | string;
   /**
    * Date of the next run for this job
-   * @type {moment.Moment}
+   * @type {Date}
    * @memberof JobData
    */
-  nextRun: moment.Moment;
+  nextRun: Date;
   /**
    * Indicate whether or not the job is running
    * @type {boolean}
